@@ -158,27 +158,47 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
 
+  const picture = document.createElement('picture');
+  picture.className = 'restaurant-picture';
+  li.append(picture);
+
+  const src1 = document.createElement('source');
+  src1.media = "(min-width: 750px)"
+  src1.srcset = `${DBHelper.imageUrlBasePath}${DBHelper.imageNameForRestaurant(restaurant)}_large_1x.jpg`;
+  src1.srcset += `,${DBHelper.imageUrlBasePath}${DBHelper.imageNameForRestaurant(restaurant)}_large_2x.jpg`;
+  picture.append(src1);
+
+  const src2 = document.createElement('source');
+  src2.media = "(min-width: 500px)"
+  src2.srcset = `${DBHelper.imageUrlBasePath}${DBHelper.imageNameForRestaurant(restaurant)}-medium.jpg`;
+  picture.append(src2);
+
   const image = document.createElement('img');
   image.className = 'restaurant-img';
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  li.append(image);
+  image.alt = restaurant.name;
+  picture.append(image);
 
-  const name = document.createElement('h1');
+  const container = document.createElement('div');
+  container.className = 'restaurant-container';
+  li.append(container);
+
+  const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
-  li.append(name);
+  container.append(name);
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
-  li.append(neighborhood);
+  container.append(neighborhood);
 
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
-  li.append(address);
+  container.append(address);
 
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more)
+  container.append(more)
 
   return li
 }

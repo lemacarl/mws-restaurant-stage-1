@@ -150,8 +150,16 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}`);
+    return (`/img/${DBHelper.imageNameForRestaurant(restaurant)}-small.jpg`);
   }
+
+  /**
+   * Restaurant image name.
+   */
+  static imageNameForRestaurant(restaurant) {
+    return restaurant.photograph.replace(/\.jpg$/, '');
+  }
+
 
   /**
    * Map marker for a restaurant.
@@ -179,3 +187,7 @@ class DBHelper {
 
 }
 
+/**
+ * Restaurant image base path.
+ */
+DBHelper.imageUrlBasePath = '/img/';
