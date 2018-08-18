@@ -184,17 +184,21 @@ createRestaurantHTML = (restaurant) => {
   container.className = 'restaurant-container';
   li.append(container);
 
+  const content = document.createElement('div');
+  content.className = "restaurant-container__content";
+  container.append(content);
+
   const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
-  container.append(name);
+  content.append(name);
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
-  container.append(neighborhood);
+  content.append(neighborhood);
 
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
-  container.append(address);
+  content.append(address);
 
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
