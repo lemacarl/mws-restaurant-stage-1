@@ -164,8 +164,8 @@ createRestaurantHTML = (restaurant) => {
 
   const src1 = document.createElement('source');
   src1.media = "(min-width: 750px)"
-  src1.srcset = `${DBHelper.imageUrlBasePath}${DBHelper.imageNameForRestaurant(restaurant)}_large_1x.jpg`;
-  src1.srcset += `,${DBHelper.imageUrlBasePath}${DBHelper.imageNameForRestaurant(restaurant)}_large_2x.jpg`;
+  src1.srcset = `${DBHelper.imageUrlBasePath}${DBHelper.imageNameForRestaurant(restaurant)}-800_large_1x.jpg 1x`;
+  src1.srcset += `,${DBHelper.imageUrlBasePath}${DBHelper.imageNameForRestaurant(restaurant)}-1200_large_2x.jpg 2x`;
   picture.append(src1);
 
   const src2 = document.createElement('source');
