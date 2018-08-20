@@ -13,6 +13,7 @@
     <title>Restaurant Info</title>
   </head>
   <body class="inside">
+    <a href="#restaurant-container" class="skip-link">Skip to main content</a>
     <!-- Beginning header -->
     <header>
       <!-- Beginning nav -->
@@ -20,7 +21,7 @@
         <h1><a href="/">Restaurant Reviews</a></h1>
       </nav>
       <!-- Beginning breadcrumb -->
-      <ul id="breadcrumb" >
+      <ul role="navigation" aria-label="Breadcrumbs" id="breadcrumb" >
         <li><a href="/">Home</a></li>
       </ul>
       <!-- End breadcrumb -->
@@ -36,22 +37,22 @@
       <!-- End map -->
       <!-- Beginning restaurant -->
       <section id="restaurant-container">
-        <h2 id="restaurant-name"></h2>
+        <h2 tabindex="0" id="restaurant-name"></h2>
         <picture id="restaurant-picture">
           <source id="source-1">
           <source id="source-2">
-          <img id="restaurant-img">
+          <img tabindex="0" id="restaurant-img">
         </picture>
         <div id="restaurant-info">
           <p id="restaurant-cuisine"></p>
           <p id="restaurant-address"></p>
-        <table id="restaurant-hours"></table>
+        <table tabindex="0" id="restaurant-hours"></table>
       </div>
     </section>
     <!-- end restaurant -->
     <!-- Beginning reviews -->
     <section id="reviews-container">
-    <ul id="reviews-list"></ul>
+    <ul tabindex="0" aria-label="A list of reviews about the restaurant." id="reviews-list"></ul>
   </section>
   <!-- End reviews -->
 </main>
