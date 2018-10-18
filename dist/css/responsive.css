@@ -1,0 +1,116 @@
+#filter-select {
+	height: 100%;
+}
+@media screen and (min-width: 550px) {
+	#filter-select {
+		width: 90%;
+		margin: 0 auto;
+	}
+	.filter-options select {
+		display: inline-block;
+		width: calc(50% - 4px);
+	}	
+	.restaurant-container .restaurant-container__content {
+		display: inline-block;
+		width: calc(100% - 180px);
+	}
+	#restaurants-list li a {
+		vertical-align: top;
+	}
+}
+@media screen and (min-width: 700px) {
+	#restaurant-img {
+		display: inline-block;
+		width: 55%;
+		margin-right: 10px;
+	}
+	#restaurant-info {
+		display: inline-block;
+		width: 40%;
+		vertical-align: top;
+	}
+	#restaurant-hours tr td:first-child {
+		text-align: left;
+	}
+	#reviews-list li {
+		display: inline-block;
+		width: calc(50% - 15px);
+		vertical-align: top;
+		margin-right: 10px;
+	}
+	#restaurants-list li {
+		display: inline-block;
+		width: calc(90%/2 - 10px);
+		margin-right: 10px;
+		vertical-align: top;
+	}
+	.restaurant-container .restaurant-container__content {
+		display: block;
+		width: 100%;
+		min-height: 6.5em;
+	}
+	#footer a {
+		display: inline-block;
+	}
+}
+@media screen and (min-width: 800px) {
+	#map-container {
+		display: inline-block;
+		width: 50%;
+		vertical-align: top;
+		margin-right: 10px;
+	}
+	#map {
+		height: 100vw;
+	}
+	#restaurants-container {
+		display: inline-block;
+		width: calc(50% - 15px);
+		height: 100vw;
+		overflow:  scroll;
+	}
+	#restaurants-list li {
+		display: block;
+		width: 100%;
+		margin: 0 auto;
+		margin-bottom:  10px;
+	}
+	.inside #map {
+		height: 400px !important;
+	}
+}
+@media screen and (min-width: 1200px) {
+	#restaurants-list li {
+		display: inline-block;
+		width: calc(90%/2 - 10px);
+		margin-right: 10px;
+		vertical-align: top;
+		margin-bottom: 10px;
+	}
+	.restaurant-container .restaurant-container__content {
+		display: block;
+		width: 100%;
+		min-height: 6.5em;
+	}
+}
+@media screen and (min-width: 2400px) {
+	.restaurant-container .restaurant-container__content {
+		display: inline-block;
+		width: calc(100% - 180px);
+	}
+	#restaurants-list li a {
+		vertical-align: top;
+	}	
+}
+@media screen and (min-width: 1000px) {
+	.inside #maincontent, #breadcrumb {
+		width: 1000px;
+		margin: 0 auto;
+	}
+	#reviews-list li {
+		display: inline-block;
+		width: calc(100%/3 - 15px);
+		vertical-align: top;
+		margin-right: 10px;
+	}
+}

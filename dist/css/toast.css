@@ -1,0 +1,113 @@
+/**
+ * @author https://github.com/AlexKvazos/VanillaToasts/blob/master/vanillatoasts.js
+ */
+
+
+#toast-container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.toast {
+  position: relative;
+  padding: 20px 18px;
+  margin: 5px;
+  background: #333;
+  cursor: pointer;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  animation-duration:  .3s;
+  animation-name: VanillaToasts;
+  animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+}
+
+.toast-fadeout {
+  animation-name: VanillaToastsFadeOut;
+  animation-duration: .3s;
+  animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  animation-fill-mode: forwards;
+}
+
+#toast-container p,
+#toast-container h4 {
+  margin: 3px 0!important;
+  color: #fff;
+}
+
+.toast-title {
+  display: block;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.toast-text {
+  display: inline-block;
+  width: calc(95% - 100px);
+}
+
+.toast-icon {
+  position: absolute;
+  top: 5px;
+  left: -40px;
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  background: #FFF;
+}
+
+.toast a, .toast a:hover {
+  color: #549EDB !important;
+  text-decoration: none !important;
+}
+
+.toast-button {
+  display: inline-block;
+  border: none;
+  background: none;
+  color: #ffa500;
+  font-weight:900;
+  text-transform: uppercase;
+  height: 48px;
+  width: 100px;
+  margin: 5px;
+}
+/** toast types */
+.toast-success {
+  border-bottom: 2px solid #51C625;
+}
+
+.toast-warning {
+  border-bottom: 2px solid #DB9215;
+}
+
+.toast-error {
+  border-bottom: 2px solid #DB2B1D;
+}
+
+.toast-info {
+  border-bottom: 2px solid #27ABDB;
+}
+
+@keyframes VanillaToasts {
+  from {
+    transform: translate3d(400px, 0, 0);;
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes VanillaToastsFadeOut {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(400px, 0, 0);
+    opacity: 0;
+  }
+}

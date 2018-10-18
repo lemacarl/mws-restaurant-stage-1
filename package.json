@@ -1,17 +1,35 @@
 {
-  "name": "reponsive-images",
-  "version": "0.1.0",
+  "name": "mws-restaurant-stage-1",
+  "version": "1.0.0",
+  "description": "--- #### _Three Stage Course Material Project - Restaurant Reviews_",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/udacity/responsive-images.git"
+    "url": "git+https://github.com/lemacarl/mws-restaurant-stage-1.git"
   },
+  "author": "Lema",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lemacarl/mws-restaurant-stage-1/issues"
+  },
+  "homepage": "https://github.com/lemacarl/mws-restaurant-stage-1#readme",
   "devDependencies": {
-    "grunt": "~0.4.5",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-nodeunit": "~0.4.1",
-    "grunt-contrib-uglify": "~0.5.0"
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "browser-sync": "^2.26.3",
+    "grunt-responsive-images": "^1.10.1",
+    "gulp": "^3.9.1"
   },
   "dependencies": {
-    "grunt-responsive-images": "^0.1.6"
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify": "^3.0.1",
+    "gulp-uglify-es": "^1.0.4",
+    "imagemin-pngquant": "^6.0.0"
   }
 }

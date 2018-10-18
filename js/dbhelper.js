@@ -4,31 +4,33 @@
 class DBHelper {
 
   /**
-   * Database URL.
-   * Change this to restaurants.json file location on your server.
-   */
-  static get DATABASE_URL() {
-    const port = 8888 // Change this to your server port
-    return `http://localhost:${port}/data/restaurants.json`;
-  }
-
-  /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+    openDatabase().then(db => {
+      let store = db.transaction('restaurants').objectStore('restaurants');
+      store.getAll().then(restaurants => {
+        if (restaurants.length == 0) {
+          fetch("http://localhost:1337/restaurants")
+          .then(response => response.json())
+          .then(restaurants => {
+            if (restaurants) {
+              store = db.transaction('restaurants', 'readwrite').objectStore('restaurants');
+              restaurants.forEach(restaurant => {
+                store.put(restaurant, restaurant['id'])
+              });
+              callback(null, restaurants);
+            }
+          })
+          .catch(error => {
+            callback(error, null)
+          })
+        }
+        else {
+          callback(null, restaurants);
+        }
+      });
+    });
   }
 
   /**
@@ -36,19 +38,29 @@ class DBHelper {
    */
   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
-    DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        const restaurant = restaurants.find(r => r.id == id);
-        if (restaurant) { // Got the restaurant
-          callback(null, restaurant);
-        } else { // Restaurant does not exist in the database
-          callback('Restaurant does not exist', null);
+    openDatabase().then(db => {
+      let store = db.transaction('restaurants').objectStore('restaurants');
+      store.get(id).then(restaurant => {
+        if (!restaurant) {
+          fetch(`http://localhost:1337/restaurants/${id}`)
+          .then(response => response.json())
+          .then(restaurant => {
+            if (restaurant) {
+              store = db.transaction('restaurants', 'readwrite').objectStore('restaurants');
+              store.put(restaurant, id);
+              callback(null, restaurant);
+            }
+          })
+          .catch(error => {
+            callback(error, "Restaurant does not exist")
+          })
         }
-      }
+        else {
+          callback(null, restaurant);
+        }
+      });
     });
-  }
+    }
 
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
@@ -157,7 +169,9 @@ class DBHelper {
    * Restaurant image name.
    */
   static imageNameForRestaurant(restaurant) {
-    return restaurant.photograph.replace(/\.jpg$/, '');
+    if (restaurant.photograph)
+      return restaurant.photograph;
+    return 'default';
   }
 
 
@@ -191,3 +205,12 @@ class DBHelper {
  * Restaurant image base path.
  */
 DBHelper.imageUrlBasePath = '/img/';
+
+/**
+ * Return IndexedDB
+ */
+function openDatabase() {
+  if (!navigator.serviceWorker) return Promise.resolve();
+  return idb.open('mws-restaurants', 1, upgradeDB => upgradeDB.createObjectStore('restaurants'));
+}
+
