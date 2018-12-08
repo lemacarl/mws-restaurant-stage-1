@@ -15,17 +15,25 @@
   margin: 5px;
   background: #333;
   cursor: pointer;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-  animation-duration:  .3s;
-  animation-name: VanillaToasts;
-  animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  -webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+          box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  -webkit-animation-duration:  .3s;
+          animation-duration:  .3s;
+  -webkit-animation-name: VanillaToasts;
+          animation-name: VanillaToasts;
+  -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+          animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
 }
 
 .toast-fadeout {
-  animation-name: VanillaToastsFadeOut;
-  animation-duration: .3s;
-  animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-  animation-fill-mode: forwards;
+  -webkit-animation-name: VanillaToastsFadeOut;
+          animation-name: VanillaToastsFadeOut;
+  -webkit-animation-duration: .3s;
+          animation-duration: .3s;
+  -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+          animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
 }
 
 #toast-container p,
@@ -53,7 +61,8 @@
   width: 50px;
   height: 50px;
   border-radius: 100%;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+          box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
   background: #FFF;
 }
 
@@ -90,24 +99,54 @@
   border-bottom: 2px solid #27ABDB;
 }
 
-@keyframes VanillaToasts {
+@-webkit-keyframes VanillaToasts {
   from {
-    transform: translate3d(400px, 0, 0);;
+    -webkit-transform: translate3d(400px, 0, 0);
+            transform: translate3d(400px, 0, 0);;
     opacity: 0;
   }
   to {
-    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
     opacity: 1;
+  }
+}
+
+@keyframes VanillaToasts {
+  from {
+    -webkit-transform: translate3d(400px, 0, 0);
+            transform: translate3d(400px, 0, 0);;
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes VanillaToastsFadeOut {
+  from {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: translate3d(400px, 0, 0);
+            transform: translate3d(400px, 0, 0);
+    opacity: 0;
   }
 }
 
 @keyframes VanillaToastsFadeOut {
   from {
-    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
     opacity: 1;
   }
   to {
-    transform: translate3d(400px, 0, 0);
+    -webkit-transform: translate3d(400px, 0, 0);
+            transform: translate3d(400px, 0, 0);
     opacity: 0;
   }
 }

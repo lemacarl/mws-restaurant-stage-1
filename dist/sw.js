@@ -7,6 +7,7 @@ self.addEventListener('install', event => {
 		caches.open(staticCacheName).then(cache => {
 			return cache.addAll([
 				'/',
+				'/restaurant.html',
 				'js/libs.js',
 				'js/main.js',
 				'js/restaurant_info.js',
@@ -38,10 +39,6 @@ self.addEventListener('fetch', event => {
 	if (requestUrl.origin === location.origin) {
 		if (requestUrl.pathname.startsWith('/img/')) {
 			event.respondWith(serveImg(event.request));
-			return;
-		}
-		if (requestUrl.pathname.startsWith('/restaurant.html')) {
-			event.respondWith(serveRestaurant(event.request));
 			return;
 		}
 	}
@@ -86,19 +83,6 @@ serveMap = (request) => {
       });
     });
   });
-}
-
-serveRestaurant = (request) => {
-	return caches.open(staticCacheName).then((cache) => {
-		return cache.match(request).then((response) => {
-			if (response) return response;
-
-			return fetch(request).then((networkResponse) => {
-				cache.put(request, networkResponse.clone());
-				return networkResponse;
-			});
-		});
-	});
 }
 
 self.addEventListener('message', event => {
