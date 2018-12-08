@@ -1,6 +1,22 @@
 @charset "utf-8";
 /* CSS Document */
 
+::-webkit-input-placeholder {
+  color: #000;
+}
+
+:-ms-input-placeholder {
+  color: #000;
+}
+
+::-ms-input-placeholder {
+  color: #000;
+}
+
+::placeholder {
+  color: #000;
+}
+
 body,td,th,p{
 	font-family: Arial, Helvetica, sans-serif;
 	color: #333;
@@ -64,7 +80,8 @@ nav h1 a {
   text-transform: uppercase;
 }
 #breadcrumb {
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     padding: 20px 10px;
     list-style: none;
     background-color: #eee;
@@ -146,7 +163,8 @@ nav h1 a {
 
 /* ====================== Restaurant Listing ====================== */
 #restaurants-list {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   background-color: #f3f3f3;
   list-style: outside none none;
   margin: 0;
@@ -155,7 +173,8 @@ nav h1 a {
   overflow: scroll;
 }
 #restaurants-list li {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   background-color: #fff;
   border: 2px solid #ccc;
   font-family: Arial,sans-serif;
@@ -260,7 +279,8 @@ nav h1 a {
   border-top: 1px solid #fff;
   width: 90%;
   margin: 0 auto;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 #reviews-container h2 {
   color: #ffa500;
@@ -269,6 +289,9 @@ nav h1 a {
   letter-spacing: -1px;
   text-align: center;
   text-transform: uppercase;
+}
+#reviews-message {
+  text-align: center;
 }
 #reviews-list {
   margin: 0;
@@ -321,4 +344,45 @@ nav h1 a {
 }
 #restaurant-hours td {
   color: #666;
+}
+#add-review {
+  text-align: center;
+  padding: 5px 15px;
+  border: 1px solid #ffa500; 
+  width: 150px;
+  margin: 10px auto;
+}
+#add-review:focus, #add-review:hover {
+  background-color: #ffa500;
+  color: #fff;
+}
+#submit-review {
+  display: none;
+  width: 80%;
+  margin: 20px auto;
+}
+#post-review {
+  color: #fff;
+  padding: 10px 10px;
+  background-color: #ffa500;
+  font-size: inherit;
+  border: none;
+}
+input[name=name], select[name=rating], textarea[name=comments] {
+  border-radius: 0;
+  border: none;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width: 100%;
+  font-size: inherit;
+  margin: 5px 0;
+}
+select[name=rating] {
+  background-color: #fff;
+}
+input[name=name], select[name=rating] {
+  height: 35px;
+}
+input[name=name], textarea[name=comments] {
+  padding: 5px 5px;
 }

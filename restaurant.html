@@ -54,8 +54,26 @@
     <!-- end restaurant -->
     <!-- Beginning reviews -->
     <section id="reviews-container">
-    <ul tabindex="0" aria-label="A list of reviews about the restaurant." id="reviews-list"></ul>
-  </section>
+      <h2>Reviews</h2>
+      <a id="add-review" href="#" aria-expanded="false">Write Review</a>
+      <form id="submit-review">
+        <div><input aria-label="Enter name" placeholder="Name" type="text" name="name" id="name"></div>
+        <div>
+          <select aria-label="Select rating" name="rating" id="rating">
+            <option selected="selected" disabled="disabled">Select a rating</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div><textarea id="comments" aria-label="Enter comments" rows="4" placeholder="Enter your comments" name="comments"></textarea></div>
+        <button id="post-review">Post Review</button>
+      </form>
+      <div id="reviews-message"></div>
+      <ul tabindex="0" aria-label="A list of reviews about the restaurant." id="reviews-list"></ul>
+    </section>
   <!-- End reviews -->
 </main>
 <!-- End main -->
