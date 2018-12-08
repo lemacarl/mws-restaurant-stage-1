@@ -36,22 +36,6 @@ initMap = () => {
   });
 }  
  
-/* window.initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      self.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: restaurant.latlng,
-        scrollwheel: false
-      });
-      fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
-    }
-  });
-} */
-
 /**
  * Get current restaurant from page URL.
  */
@@ -140,21 +124,18 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
-  title.innerHTML = 'Reviews';
-  container.appendChild(title);
+  const reviewsMsg = document.getElementById('reviews-message');
 
   if (!reviews) {
-    const noReviews = document.createElement('p');
-    noReviews.innerHTML = 'No reviews yet!';
-    container.appendChild(noReviews);
+    reviewsMsg.innerHTML = 'No reviews yet!';
     return;
   }
   const ul = document.getElementById('reviews-list');
+  ul.innerHTML = '';
+  reviewsMsg.innerHTML = '';
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
-  container.appendChild(ul);
 }
 
 /**
@@ -216,3 +197,93 @@ getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+/**
+ * Expand add review  
+ */
+const addReviewButton = document.getElementById('add-review');
+addReviewButton.addEventListener('click', e => {
+  e.preventDefault();
+  const form = document.getElementById('submit-review');
+  form.style.display = 'block';
+  addReviewButton.setAttribute('aria-expanded', true);
+});
+
+/**
+ * Post review
+ */
+const postReviewButton = document.getElementById('post-review');
+postReviewButton.addEventListener('click', e => {
+  e.preventDefault();
+  
+  const name = document.getElementById('name');
+  const comments = document.getElementById('comments');
+  const rating = document.getElementById('rating');
+
+  // Validate review fields
+  if (name.value === '' || comments.value === '' || rating.value === '') return;
+
+  const review = {}
+  review.name = name.value;
+  review.rating = rating.value;
+  review.comments = comments.value;
+  review.date = moment().format('MMMM D, YYYY');
+  review.synced = false;
+
+  // Reset values
+  name.value = '';
+  comments.value = '';
+
+  // Fetch restaurant from DB
+  DBHelper.fetchRestaurantById(self.restaurant.id, (error, restaurant) => {
+    if (restaurant) {
+      self.restaurant = restaurant;
+
+      if (Array.isArray(self.restaurant.reviews)) {
+        self.restaurant.reviews.push(review);
+      }
+      else {
+        self.restaurant.reviews = [];
+        self.restaurant.reviews.push(review);
+      }
+
+      DBHelper.updateRestaurantReviews(self.restaurant).then(result => {
+        if (result) {
+          const form = document.getElementById('submit-review');
+          form.style.display = 'none';
+
+          addReviewButton.setAttribute('aria-expanded', false);
+
+          const toast = Toast.create({
+            text: "Review submitted."
+          });
+          Toast.setTimeout(toast.id, 2000);
+
+          fillReviewsHTML();
+        }
+      });
+    }
+  });
+});
+
+/**
+ * Offline event handler
+ */
+window.addEventListener('offline', () => {
+  const toast = Toast.create({
+    text: "Unable to connect. Retrying..."
+  });
+
+  Toast.setTimeout(toast.id, 5000);
+});
+
+/**
+ * Online event handler
+ */
+window.addEventListener('online', () => {
+  const toast = Toast.create({
+    text: "Syncing reviews..."
+  });
+  Toast.setTimeout(toast.id, 5000);
+  DBHelper.syncReviews();
+})

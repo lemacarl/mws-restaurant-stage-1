@@ -40,6 +40,7 @@ class DBHelper {
     // fetch all restaurants with proper error handling.
     openDatabase().then(db => {
       let store = db.transaction('restaurants').objectStore('restaurants');
+      id = parseInt(id);
       store.get(id).then(restaurant => {
         if (!restaurant) {
           fetch(`http://localhost:1337/restaurants/${id}`)
@@ -60,7 +61,7 @@ class DBHelper {
         }
       });
     });
-    }
+  }
 
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
@@ -157,7 +158,6 @@ class DBHelper {
   static urlForRestaurant(restaurant) {
     return (`./restaurant.html?id=${restaurant.id}`);
   }
-
   /**
    * Restaurant image URL.
    */
@@ -188,17 +188,63 @@ class DBHelper {
       marker.addTo(newMap);
     return marker;
   } 
-  /* static mapMarkerForRestaurant(restaurant, map) {
-    const marker = new google.maps.Marker({
-      position: restaurant.latlng,
-      title: restaurant.name,
-      url: DBHelper.urlForRestaurant(restaurant),
-      map: map,
-      animation: google.maps.Animation.DROP}
-    );
-    return marker;
-  } */
 
+  /**
+   * Update restaurant
+   */
+  static updateRestaurantReviews(restaurant) {
+    return openDatabase().then(db => {
+      let store = db.transaction('restaurants', 'readwrite').objectStore('restaurants');
+      store.put(restaurant, restaurant.id);
+      DBHelper.syncReviews();
+      return true;
+    });
+  }
+
+  /**
+   * Sync reviews with backend
+   */
+  static syncReviews() {
+    openDatabase().then(db => {
+      let store = db.transaction('restaurants', 'readwrite').objectStore('restaurants');
+      store.getAll().then(restaurants => {
+        if (restaurants.length === 0) return;
+        
+        restaurants.forEach(restaurant => {
+          if (!restaurant.reviews) return;
+          
+          for (let i = 0; i < restaurant.reviews.length; i++) {
+            let review = restaurant.reviews[i];            
+            if (review.synced == false) {
+                DBHelper.syncReview(restaurant.id, review).then(response => {
+                  restaurant.reviews[i].synced = true;
+                  db.transaction('restaurants', 'readwrite').objectStore('restaurants').put(restaurant, restaurant.id);
+                });
+            }
+          }
+        });
+      });
+    });
+  }
+
+  /**
+   * Sync a review
+   */
+  static syncReview(restaurant_id, review) {
+    return fetch('http://localhost:1337/reviews/', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify({
+          restaurant_id: restaurant_id,
+          name: review.name,
+          rating: review.rating,
+          comments: review.comments
+        })
+      })
+      .then(response => response.json())
+  }
 }
 
 /**
