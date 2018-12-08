@@ -6,7 +6,7 @@ const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
 const imagemin = require('gulp-imagemin');
 const pngquant = require('imagemin-pngquant');
-
+const autoprefixer = require('gulp-autoprefixer');
 
 gulp.task("default",['copy-html', 'copy-images', 'copy-css', 'copy-sw', 'scripts'],() => {
 	gulp.watch('./*.html', ['copy-html']);
@@ -105,5 +105,12 @@ gulp.task('copy-images', () => {
 });
 
 gulp.task('copy-css', () => {
-	gulp.src('css/*').pipe(gulp.dest('dist/css'))
+	gulp
+		.src('css/*')
+		.pipe(
+			autoprefixer({
+				browsers: ['last 2 versions']
+			})
+		)
+		.pipe(gulp.dest('dist/css'))
 });
