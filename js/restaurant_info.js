@@ -104,6 +104,14 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const picture = document.getElementById('restaurant-picture');
   picture.className = 'restaurant-picture';
 
+  const favButton = document.getElementById('favbutton');
+  if (restaurant.is_favorite === 'false') {
+    favbutton.className = "heart-inactive"
+  }
+  else {
+    favbutton.className = 'heart-active';
+  }
+
   const src1 = document.getElementById('source-1');
   src1.media = "(min-width: 750px)"
   src1.srcset = `${DBHelper.imageUrlBasePath}${DBHelper.imageNameForRestaurant(restaurant)}-800_large_1x.jpg 1x`;
@@ -312,6 +320,24 @@ postReviewButton.addEventListener('click', e => {
     }
   });
 });
+
+/**
+ * Handle favorite button
+ */
+const favButton = document.getElementById('favbutton');
+favbutton.addEventListener('click', e => {
+  e.preventDefault();
+  if (favbutton.classList.contains('heart-active')) {
+    self.restaurant.is_favorite = false;
+    favbutton.className = 'heart-inactive';
+    DBHelper.favoriteRestaurant(self.restaurant);
+  }
+  else {
+    self.restaurant.is_favorite = true;
+    favbutton.className = 'heart-active';
+    DBHelper.favoriteRestaurant(self.restaurant);
+  }
+})
 
 /**
  * Offline event handler

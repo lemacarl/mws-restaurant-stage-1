@@ -283,6 +283,27 @@ class DBHelper {
     });
   }
 
+  /**
+   * Favorite a restaurant
+   */
+  static favoriteRestaurant(restaurant) {
+
+    openDatabase().then(db => {
+
+      let store = db.transaction('restaurants', 'readwrite').objectStore('restaurants');
+      store.put(restaurant, restaurant.id);
+
+      fetch(`http://localhost:1337/restaurants/${restaurant.id}/?is_favorite=${restaurant.is_favorite}`, {
+        method: 'PUT'
+      })
+        .then(response => response.json())
+        .then(restaurant => {
+            store = db.transaction('restaurants', 'readwrite').objectStore('restaurants');
+            store.put(restaurant, restaurant.id);
+        })
+    })
+  }
+
 }
 
 /**
