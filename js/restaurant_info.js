@@ -10,54 +10,84 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 /**
+ * Initialize worker
+ */
+const worker = new Worker('js/worker.js');
+worker.addEventListener('message', e => {
+  switch(e.data.cmd) {
+    case 'fetch_reviews':
+      if (e.data.error) {
+        console.log(e.data.error);
+        return;
+      }
+
+      generateReviewsHTML(e.data.reviews);
+      break;
+    case 'fetch_restaurant':
+      if (e.data.error) {
+        console.log(e.data.error);
+        return;
+      }
+
+      self.restaurant = e.data.restaurant;
+      fillRestaurantHTML();
+      handleRestaurant(null, self.restaurant);
+      break;
+  }
+});
+
+/**
  * Initialize leaflet map
  */
 initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {      
-      self.newMap = L.map('map', {
-        center: [restaurant.latlng.lat, restaurant.latlng.lng],
-        zoom: 16,
-        scrollWheelZoom: false
-      });
-      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-        mapboxToken: 'pk.eyJ1IjoibGVtYSIsImEiOiJjamt0YXVla2MwM3NjM3dvZHQ0NDIwZmVpIn0.pOEFaPY6enCchIG29Lo2SQ',
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-          '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-          'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        id: 'mapbox.streets'    
-      }).addTo(newMap);
-      fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
-    }
-  });
+  fetchRestaurantFromURL();
 }  
  
 /**
  * Get current restaurant from page URL.
  */
-fetchRestaurantFromURL = (callback) => {
+fetchRestaurantFromURL = () => {
   if (self.restaurant) { // restaurant already fetched!
-    callback(null, self.restaurant)
+    handleRestaurant(null, self.restaurant)
     return;
   }
+  
   const id = getParameterByName('id');
   if (!id) { // no id found in URL
     error = 'No restaurant id in URL'
-    callback(error, null);
-  } else {
-    DBHelper.fetchRestaurantById(id, (error, restaurant) => {
-      self.restaurant = restaurant;
-      if (!restaurant) {
-        console.error(error);
-        return;
-      }
-      fillRestaurantHTML();
-      callback(null, restaurant)
+    handleRestaurant(error, null);
+  } 
+  else {
+    worker.postMessage({
+      cmd: 'fetch_restaurant',
+      id: id
     });
+  }
+}
+
+/**
+ * Handle restaurant callback
+ */
+handleRestaurant = (error, restaurant) => {
+  if (error) { // Got an error!
+    console.error(error);
+  } 
+  else {      
+    self.newMap = L.map('map', {
+      center: [restaurant.latlng.lat, restaurant.latlng.lng],
+      zoom: 16,
+      scrollWheelZoom: false
+    });
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
+      mapboxToken: 'pk.eyJ1IjoibGVtYSIsImEiOiJjamt0YXVla2MwM3NjM3dvZHQ0NDIwZmVpIn0.pOEFaPY6enCchIG29Lo2SQ',
+      maxZoom: 18,
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      id: 'mapbox.streets'    
+    }).addTo(newMap);
+    fillBreadcrumb();
+    DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
   }
 }
 
@@ -123,6 +153,21 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+  if (!reviews) {
+    worker.postMessage({
+      cmd: 'fetch_reviews',
+      id: self.restaurant.id
+    });
+  }
+  else {
+    generateReviewsHTML(reviews);
+  }
+}
+
+/**
+ * Generate reviews HTML
+ */
+generateReviewsHTML = reviews => {
   const container = document.getElementById('reviews-container');
   const reviewsMsg = document.getElementById('reviews-message');
 
@@ -130,6 +175,7 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     reviewsMsg.innerHTML = 'No reviews yet!';
     return;
   }
+
   const ul = document.getElementById('reviews-list');
   ul.innerHTML = '';
   reviewsMsg.innerHTML = '';
@@ -233,6 +279,7 @@ postReviewButton.addEventListener('click', e => {
   // Reset values
   name.value = '';
   comments.value = '';
+  rating.value = -1;
 
   // Fetch restaurant from DB
   DBHelper.fetchRestaurantById(self.restaurant.id, (error, restaurant) => {
@@ -281,9 +328,7 @@ window.addEventListener('offline', () => {
  * Online event handler
  */
 window.addEventListener('online', () => {
-  const toast = Toast.create({
-    text: "Syncing reviews..."
+  worker.postMessage({
+    cmd: 'sync_reviews'
   });
-  Toast.setTimeout(toast.id, 5000);
-  DBHelper.syncReviews();
 })

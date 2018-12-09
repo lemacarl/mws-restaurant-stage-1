@@ -5,6 +5,42 @@ var newMap
 var markers = []
 
 /**
+ * Initialize worker
+ */
+const worker = new Worker('js/worker.js');
+worker.addEventListener('message', e => {
+  switch(e.data.cmd) {
+    case 'fetch_cuisines':
+      if (e.data.error) {
+        console.log(e.data.error);
+        return;
+      }
+
+      self.cuisines = e.data.cuisines;
+      fillCuisinesHTML();
+      break;
+    case 'fetch_neighborhoods':
+      if (e.data.error) {
+        console.log(e.data.error);
+        return;
+      }
+
+      self.neighborhoods = e.data.neighborhoods;
+      fillNeighborhoodsHTML();
+      break;
+    case 'fetch_restaurant_cuisine_neighborhood':
+      if (e.data.error) {
+        console.log(e.data.error);
+        return;
+      }
+
+      resetRestaurants(e.data.restaurants);
+      fillRestaurantsHTML();
+      break;
+  }
+});
+
+/**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -18,13 +54,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * Fetch all neighborhoods and set their HTML.
  */
 fetchNeighborhoods = () => {
-  DBHelper.fetchNeighborhoods((error, neighborhoods) => {
-    if (error) { // Got an error
-      console.error(error);
-    } else {
-      self.neighborhoods = neighborhoods;
-      fillNeighborhoodsHTML();
-    }
+  worker.postMessage({
+    cmd: 'fetch_neighborhoods',
   });
 }
 
@@ -45,13 +76,8 @@ fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
  * Fetch all cuisines and set their HTML.
  */
 fetchCuisines = () => {
-  DBHelper.fetchCuisines((error, cuisines) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      self.cuisines = cuisines;
-      fillCuisinesHTML();
-    }
+  worker.postMessage({
+    cmd: 'fetch_cuisines'
   });
 }
 
@@ -89,22 +115,6 @@ initMap = () => {
 
   updateRestaurants();
 }
-/* window.initMap = () => {
-  let loc = {
-    lat: 40.722216,
-    lng: -73.987501
-  };
-  self.map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12,
-    center: loc,
-    scrollwheel: false
-  });
-  updateRestaurants();
-} */
-
-/**
- * Update page and map for current restaurants.
- */
 updateRestaurants = () => {
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
@@ -115,14 +125,11 @@ updateRestaurants = () => {
   const cuisine = cSelect[cIndex].value;
   const neighborhood = nSelect[nIndex].value;
 
-  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      resetRestaurants(restaurants);
-      fillRestaurantsHTML();
-    }
-  })
+  worker.postMessage({
+    cmd: "fetch_restaurant_cuisine_neighborhood",
+    cuisine: cuisine,
+    neighborhood: neighborhood
+  });
 }
 
 /**
@@ -224,13 +231,3 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 
 } 
-/* addMarkersToMap = (restaurants = self.restaurants) => {
-  restaurants.forEach(restaurant => {
-    // Add marker to the map
-    const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
-    google.maps.event.addListener(marker, 'click', () => {
-      window.location.href = marker.url
-    });
-    self.markers.push(marker);
-  });
-} */

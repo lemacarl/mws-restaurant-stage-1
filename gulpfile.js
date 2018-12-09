@@ -45,7 +45,7 @@ gulp.task('copy-sw', () => {
 
 gulp.task('scripts', () => {
 	gulp
-		.src(['js/**/*.js', '!js/restaurant_info.js', '!js/main.js'])
+		.src(['js/**/*.js', '!js/restaurant_info.js', '!js/main.js', '!js/worker.js'])
 		.pipe(sourcemaps.init())
 		.pipe(babel())
 		.pipe(concat('libs.js'))
@@ -61,6 +61,13 @@ gulp.task('scripts', () => {
 
 	gulp
 		.src('js/restaurant_info.js')
+		.pipe(sourcemaps.init())
+		.pipe(babel())
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest('dist/js'))
+
+	gulp
+		.src('js/worker.js')
 		.pipe(sourcemaps.init())
 		.pipe(babel())
 		.pipe(sourcemaps.write())
@@ -69,7 +76,7 @@ gulp.task('scripts', () => {
 
 gulp.task('scripts-dist', () => {
 	gulp
-		.src(['js/**/*.js', '!js/restaurant_info.js', '!js/main.js'])
+		.src(['js/**/*.js', '!js/restaurant_info.js', '!js/main.js', '!js/worker.js'])
 		.pipe(sourcemaps.init())
 		.pipe(babel())
 		.pipe(concat('libs.js'))
@@ -87,6 +94,14 @@ gulp.task('scripts-dist', () => {
 
 	gulp
 		.src('js/restaurant_info.js')
+		.pipe(sourcemaps.init())
+		.pipe(babel())
+		.pipe(uglify())
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest('dist/js'))
+
+	gulp
+		.src('js/worker.js')
 		.pipe(sourcemaps.init())
 		.pipe(babel())
 		.pipe(uglify())

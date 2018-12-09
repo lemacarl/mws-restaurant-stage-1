@@ -23,7 +23,7 @@ class DBHelper {
             }
           })
           .catch(error => {
-            callback(error, null)
+            callback(error, null);
           })
         }
         else {
@@ -53,7 +53,7 @@ class DBHelper {
             }
           })
           .catch(error => {
-            callback(error, "Restaurant does not exist")
+            callback(error, "Restaurant does not exist");
           })
         }
         else {
@@ -245,6 +245,44 @@ class DBHelper {
       })
       .then(response => response.json())
   }
+
+  /**
+   * Fetch restaurant reviews
+   */
+  static fetchRestaurantReviewsById(id, callback) {
+    openDatabase().then(db => {
+      let store = db.transaction('restaurants').objectStore('restaurants');
+      id = parseInt(id);
+      store.get(id).then(restaurant => {
+        if (!restaurant.reviews) {
+          fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`)
+            .then(response => response.json())
+            .then(reviews => {
+                let reviewsArray = []
+                reviews.forEach(review => {
+                  reviewsArray.push({
+                    name: review.name,
+                    rating: review.rating,
+                    comments: review.comments,
+                    date: moment(review.createdAt).format('MMMM D, YYYY')
+                  });
+                });
+                restaurant.reviews = reviewsArray;
+                store = db.transaction('restaurants', 'readwrite').objectStore('restaurants');
+                store.put(restaurant, id);
+                callback(null, reviewsArray);
+            })
+            .catch(error => {
+              callback(error, "Failed to fetch reviews");
+            });
+        }
+        else {
+          callback(null, restaurant.reviews);
+        }
+      });
+    });
+  }
+
 }
 
 /**
@@ -256,7 +294,7 @@ DBHelper.imageUrlBasePath = '/img/';
  * Return IndexedDB
  */
 function openDatabase() {
-  if (!navigator.serviceWorker) return Promise.resolve();
+  // if (!navigator.serviceWorker) return Promise.resolve();
   return idb.open('mws-restaurants', 1, upgradeDB => upgradeDB.createObjectStore('restaurants'));
 }
 
